@@ -1,0 +1,134 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>phina lab</title>
+<script src="javascripts/phina.js"></script>
+<script src="javascripts/pixi.js"></script>
+<script src="javascripts/phina.pixi.js"></script>
+<script>
+phina.globalize()
+
+phina.define('Fox', {
+  superClass:'phina.pixi.display.Sprite', 
+  init: function(param){
+    this.superInit('fox');
+
+    this.velocity = phina.geom.Vector2(Math.randint(-5,5), Math.randint(-5,5));
+  },
+  update: function(){
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+    if(this.x < 0 || this.x > 500){ this.velocity.x = -this.velocity.x }
+    if(this.y < 0 || this.y > 300){ this.velocity.y = -this.velocity.y }
+  }
+});
+
+phina.define('Fox2', {
+  superClass:'phina.display.Sprite', 
+  init: function(param){
+    this.superInit('fox');
+
+    this.velocity = phina.geom.Vector2(Math.randint(-5,5), Math.randint(-5,5));
+  },
+  update: function(){
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+    if(this.x < 0 || this.x > 500){ this.velocity.x = -this.velocity.x }
+    if(this.y < 0 || this.y > 300){ this.velocity.y = -this.velocity.y }
+  }
+});
+
+phina.define("TestScene", {
+  superClass: "phina.display.DisplayScene",
+  init: function(param){
+    this.superInit(param);
+
+    this.pixiLayer = phina.display.PixiLayer(param)
+    .addChildTo(this);
+
+    // phina.pixi.display.Sprite('fox')
+    // .addChildTo(this.pixiLayer)
+    // .setPosition(-50,0)
+    // .tweener
+    //   .moveTo(60,0)
+
+    //PCxCanvas
+    // for(var i=0;i<5000;i++){
+    //   Fox2()
+    //   .addChildTo(this)
+    //   .setPosition(100,100)
+    // }
+
+    //MobilexCanvas
+    // for(var i=0;i<3000;i++){
+    //   Fox2()
+    //   .addChildTo(this)
+    //   .setPosition(100,100)
+    // }
+
+    //PCxWebGL
+    // for(var i=0;i<20000;i++){
+    //   Fox()
+    //   .addChildTo(this.pixiLayer)
+    //   .setPosition(100,100)
+    // }
+
+    //MobilexWebGL
+    for(var i=0;i<7500;i++){
+      Fox()
+      .addChildTo(this.pixiLayer)
+      .setPosition(100,100)
+    }
+
+    phina.pixi.display.Shape({
+      width:100, height:100,
+      backgroundColor:0x000000
+    }).addChildTo(this.pixiLayer)
+    .setPosition(100,150)
+
+    phina.pixi.display.Label({
+      height:48, width:400,
+      text:'Hello phina.pixi.js!', fontSize:48,
+      fill:0x000000
+    }).addChildTo(this.pixiLayer)
+    .setPosition(300,100)
+
+  }
+})
+
+
+phina.main(()=>{
+  app = phina.display.CanvasApp({
+    width: 500,
+    height: 300,
+    fit: true,
+    fps: 20,
+  })
+  app.backgroundColor="#efeade"
+  var loader = phina.asset.AssetLoader();
+  loader.load({
+    image:{
+      'fox': 'https://raw.githubusercontent.com/pentamania/phina-pixi/master/fox64x64.png'
+    },
+    pixiimage:{
+      'fox': 'https://raw.githubusercontent.com/pentamania/phina-pixi/master/fox64x64.png'
+    }
+  });
+  loader.onload = function(){
+    app.replaceScene(TestScene({
+      width:1000, height:600,
+    }))
+  };
+  app.enableStats();
+  app.run()
+})
+</script>
+</head>
+<body>
+  
+  <canvas id="game_disp"></canvas>
+
+</body>
+</html>
