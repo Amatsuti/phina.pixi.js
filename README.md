@@ -1,6 +1,20 @@
 # phina.pixi.js
 
-phina.pixi.js is the extension package for phina.js.
+phina.pixi.js is the extension package for phina.js and pixi.js.
+
+## Quick Start
+
+```
+$ npm i
+$ npm i -g gulp
+$ npm run serve
+```
+
+or only build
+
+```
+$ npm run build
+```
 
 ## additional class list
 
