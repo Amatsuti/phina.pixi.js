@@ -151,6 +151,21 @@ phina.define('phina.pixi.display.Shape', {
       shadowBlur: 4,
     }
   },
+
+  _defined: function() {
+    phina.display.Shape.watchRenderProperties.call(this, [
+      'width',
+      'height',
+      'radius',
+      'padding',
+      'backgroundColor',
+      'fill',
+      'stroke',
+      'strokeWidth',
+      'shadow',
+      'shadowBlur',
+    ]);
+  },
 });
 
 

@@ -31,6 +31,18 @@ phina.define('phina.pixi.Container', {
   },
 
   _accessor:{
+    width: {
+      get: function()   { return this.canvas.width; },
+      set: function(v)  {
+        return this.canvas.width = v;
+      }
+    },
+    height: {
+      get: function()   { return this.canvas.height; },
+      set: function(v)  {
+        return this.canvas.height = v;
+      }
+    }
   },
 
   _static:{

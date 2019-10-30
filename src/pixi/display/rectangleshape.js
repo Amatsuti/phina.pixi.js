@@ -25,6 +25,8 @@ phina.define('phina.pixi.display.RectangleShape', {
   },
 
   _defined: function() {
-    phina.display.Shape.watchRenderProperty.call(this, 'cornerRadius');
+    phina.display.Shape.watchRenderProperties.call(this, [
+      'cornerRadius',
+    ]);
   },
 });

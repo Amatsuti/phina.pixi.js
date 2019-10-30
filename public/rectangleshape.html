@@ -42,17 +42,19 @@ phina.define("TestScene", {
       fill:0x00FF00, stroke:0x000000,
       cornerRadius: 10,
     }).addChildTo(this.pixiLayer)
+    .setInteractive(true)
+    .on('click', function(e){
+      this.width += 20;
+      this.height += 20;
+      console.log(this.width, this.height);
+      this.stroke = "transparent";
+    })
     .setPosition(100,100)
 
     phina.pixi.display.CircleShape({
       width:80, height:80,
       fill:0x0000FF, stroke:0x000000,
     }).addChildTo(this.pixiLayer)
-    .setInteractive(true)
-    // .on('pointertap', function(){ console.log('omg') })
-    .on('click', function(e){
-      console.log('click');
-    })
     .setPosition(150,150)
     
   },

@@ -64,49 +64,196 @@ phina.define('phina.pixi.display.PlainElement', {
     //なぜか3回呼ばれる対策でtrueにしておく
     return this.superMethod('on', type, listener, true);
   },
-
   _static:{
     defaults:{
       width:100, height:100,
       canvas:null,
     }
   },
-  _defined: function(){
-    this.prototype.$watch('x', function(newVal, oldVal) {
-      this.context.x = newVal - this.originX * this.width;
-    });
-    this.prototype.$watch('y', function(newVal, oldVal) {
-      this.context.y = newVal - this.originY * this.height;
-    });
-    this.prototype.$watch('rotation', function(newVal, oldVal) {
-      this.context.rotation = newVal;
-    });
-    this.prototype.$watch('originX', function(newVal, oldVal) {
-      this.context.x = newVal - this.originX * this.width;
-    });
-    this.prototype.$watch('originY', function(newVal, oldVal) {
-      this.context.y = newVal - this.originY * this.height;
-    });
-    this.prototype.$watch('scaleX', function(newVal, oldVal) {
-      this.context.scale.x = newVal;
-    });
-    this.prototype.$watch('scaleY', function(newVal, oldVal) {
-      this.context.scale.y = newVal;
-    });
-    this.prototype.$watch('width', function(newVal, oldVal) {
-      this.context.width = newVal;
-    });
-    this.prototype.$watch('height', function(newVal, oldVal) {
-      this.context.height = newVal;
-    });
-    this.prototype.$watch('radius', function(newVal, oldVal) {
-      this.context.radius = newVal;
-    });
-    this.prototype.$watch('interactive', function(newVal, oldVal) {
-      this.context.interactive = newVal;
-      this.context.buttonMode = newVal;
-      this.__interactive = false;
-    });
+  _accessor: {
+    /**
+     * @property    x
+     * x座標値
+     */
+    x: {
+      "get": function()   { return this.position.x; },
+      "set": function(v)  { 
+        this.position.x = v;
+        this.context.x = this.position.x - this.originX * this.width;
+      }
+    },
+    /**
+     * @property    y
+     * y座標値
+     */
+    y: {
+      "get": function()   { return this.position.y; },
+      "set": function(v)  {
+        this.position.y = v;
+        this.context.y = this.position.y - this.originY * this.height;
+      }
+    },
+
+    /**
+     * @property    originX
+     * x座標値
+     */
+    originX: {
+      "get": function()   { return this.origin.x; },
+      "set": function(v)  {
+        this.origin.x = v;
+        this.context.x = this.position.x - this.originX * this.width;
+      }
+    },
+    
+    /**
+     * @property    originY
+     * y座標値
+     */
+    originY: {
+      "get": function()   { return this.origin.y; },
+      "set": function(v)  {
+        this.origin.y = v;
+        this.context.y = this.position.y - this.originY * this.height;
+      }
+    },
+    
+    /**
+     * @property    scaleX
+     * スケールX値
+     */
+    scaleX: {
+      "get": function()   { return this.scale.x; },
+      "set": function(v)  {
+        this.scale.x = this.context.scale.x = v;
+      }
+    },
+    
+    /**
+     * @property    scaleY
+     * スケールY値
+     */
+    scaleY: {
+      "get": function()   { return this.scale.y; },
+      "set": function(v)  {
+        this.scale.y = this.context.scale.y = v;
+      }
+    },
+    
+    /**
+     * @property    width
+     * width
+     */
+    width: {
+      "get": function()   {
+        return (this.boundingType === 'rect') ?
+          this._width : this._diameter;
+      },
+      "set": function(v)  {
+        this._width = this.context.width = v; 
+      }
+    },
+    /**
+     * @property    height
+     * height
+     */
+    height: {
+      "get": function()   {
+        return (this.boundingType === 'rect') ?
+          this._height : this._diameter;
+      },
+      "set": function(v)  {
+        this._height = this.context.height = v;
+      }
+    },
+
+    /**
+     * @property    radius
+     * 半径
+     */
+    radius: {
+      "get": function()   {
+        return (this.boundingType === 'rect') ?
+          (this.width+this.height)/4 : this._radius;
+      },
+      "set": function(v)  {
+        this._radius = this.context.radius = v;
+        this._diameter = v*2;
+      },
+    },
+    
+    /**
+     * @property    top
+     * 左
+     */
+    top: {
+      "get": function()   { return this.y - this.height*this.originY; },
+      "set": function(v)  { this.y = v + this.height*this.originY; },
+    },
+ 
+    /**
+     * @property    right
+     * 左
+     */
+    right: {
+      "get": function()   { return this.x + this.width*(1-this.originX); },
+      "set": function(v)  { this.x = v - this.width*(1-this.originX); },
+    },
+ 
+    /**
+     * @property    bottom
+     * 左
+     */
+    bottom: {
+      "get": function()   { return this.y + this.height*(1-this.originY); },
+      "set": function(v)  { this.y = v - this.height*(1-this.originY); },
+    },
+ 
+    /**
+     * @property    left
+     * 左
+     */
+    left: {
+      "get": function()   { return this.x - this.width*this.originX; },
+      "set": function(v)  { this.x = v + this.width*this.originX; },
+    },
+
+    /**
+     * @property    centerX
+     * centerX
+     */
+    centerX: {
+      "get": function()   { return this.x + this.width/2 - this.width*this.originX; },
+      "set": function(v)  {
+        // TODO: どうしようかな??
+      }
+    },
+ 
+    /**
+     * @property    centerY
+     * centerY
+     */
+    centerY: {
+      "get": function()   { return this.y + this.height/2 - this.height*this.originY; },
+      "set": function(v)  {
+        // TODO: どうしようかな??
+      }
+    },
+
+    interactive: {
+      "get": function()   { return this.__interactive; },
+      "set": function(v)  {
+        this.context.interactive = v;
+        this.context.buttonMode = v;
+        this.__interactive = false;
+      }
+    },
+    rotation: {
+      "get": function()   { return this.__rotation; },
+      "set": function(v)  {
+        this.__rotation = this.context.rotation = v;
+      }
+    }
   },
 });
 
