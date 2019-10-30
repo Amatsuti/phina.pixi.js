@@ -72,26 +72,20 @@ phina.define('phina.pixi.display.Shape', {
     var size = this.calcCanvasSize();
     canvas.setSize(size.width, size.height);
     // クリアカラー
+    canvas.clear();
     canvas.clearColor(this.backgroundColor);
-    // canvas.clear();
     // 中心に座標を移動
     canvas.transformCenter();
+
+    context.fillStyle.color = this.fill;
+    context.strokeStyle.color = this.stroke;
+    context.strokeStyle.width = this.strokeWidth;
 
     // 描画前処理
     this.prerender(this.canvas);
 
-    // ストローク描画
-    if (this.isStrokable()) {
-      context.strokeColor = this.stroke;
-      context.strokeWidth = this.strokeWidth;
-      // context.lineJoin = "round";
-      // context.shadowBlur = 0;
-      this.renderStroke(canvas);
-    }
-
     // 塗りつぶし描画
-    if (this.fill) {
-      context.fillColor = this.fill;
+    if (this.fill && this.fill != 'transparent') {
 
       // shadow の on/off
       // if (this.shadow) {
@@ -105,10 +99,41 @@ phina.define('phina.pixi.display.Shape', {
       this.renderFill(canvas);
     }
 
+    // ストローク描画
+    if (this.isStrokable()) {
+      // context.lineJoin = "round";
+      // context.shadowBlur = 0;
+      this.renderStroke(canvas); //現状無意味
+    }
+
     // 描画後処理
     this.postrender(this.canvas);
 
     return this;
+  },
+
+  _accessor: {
+    fill:{
+      get: function(){ return this._fill; },
+      set: function(v){
+        this._fill = v;
+        return this;
+      }
+    },
+    stroke:{
+      get: function(){ return this._stroke; },
+      set: function(v){
+        this._stroke = v;
+        return this;
+      }
+    },
+    strokeWidth:{
+      get: function(){ return this._strokeWidth; },
+      set: function(v){
+        this._strokeWidth = v;
+        return this;
+      }
+    },
   },
 
   _static:{
@@ -125,7 +150,7 @@ phina.define('phina.pixi.display.Shape', {
       shadow: false,
       shadowBlur: 4,
     }
-  }
+  },
 });
 
 

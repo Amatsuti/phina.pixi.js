@@ -6,5 +6,5 @@ phina.namespace(function(){
       var flow = texture.load(path);
       return flow;
     }
-  })
-})
+  });
+});

@@ -4,7 +4,7 @@
   * @extends phina.pixi.display.Shape
   */
 phina.define('phina.pixi.display.Label', {
-  superClass: 'phina.pixi.display.PlainElement',
+  superClass: 'phina.pixi.display.Shape',
 
   /**
     * @constructor
@@ -18,10 +18,11 @@ phina.define('phina.pixi.display.Label', {
     }
 
     options = ({}).$safe(options, phina.pixi.display.Label.defaults, {canvas:phina.pixi.Container(new PIXI.Text())});
+    this._fontStyle = new PIXI.TextStyle();
 
     this.superInit(options);
 
-    this._fontStyle = this.context.style = new PIXI.TextStyle();
+    this.context.style = this._fontStyle;
     this.text = options.text;
     this.fontSize = options.fontSize;
     this.fontWeight = options.fontWeight;
@@ -34,38 +35,41 @@ phina.define('phina.pixi.display.Label', {
   },
 
   calcCanvasWidth: function() {
-    var width = 0;
-    var canvas = this.canvas;
-    // canvas.context.font = this.font;
-    this._lines.forEach(function(line) {
-      var w = PIXI.TextMetrics.measureText(line, this.fontStyle).width;
-      if (width < w) {
-        width = w;
-      }
-    }, this);
+    var width = PIXI.TextMetrics.measureText(this.text, this.fontStyle).width;
     if (this.align !== 'center') width*=2;
-
     return width + this.padding*2;
   },
 
   calcCanvasHeight: function() {
-    var height = this.fontSize * this._lines.length;
+    var height = PIXI.TextMetrics.measureText(this.text, this.fontStyle).height;
     if (this.baseline !== 'middle') height*=2;
-    return height*this.lineHeight + this.padding*2;
+    return height + this.padding*2;
   },
 
-  prerender: function(canvas) {
-    var context = canvas.fontStyle;
-    context.fontFamily = this.font;
-    context.fontSize = this.fontSize;
-    context.fontWeight = this.fontWeight;
+  calcCanvasSize: function () {
+    return {
+      width: this.calcCanvasWidth(),
+      height: this.calcCanvasHeight(),
+    };
+  },
+
+  render: function(canvas) {
+    var context = this.fontStyle;
+
+    // context.fontFamily = this.font;
+    // context.fontSize = this.fontSize;
+    // context.fontWeight = this.fontWeight;
     // context.textAlign = this.align;
     // context.textBaseline = this.baseline;
 
-    var lines = this._lines;
-    this.lineSize = this.fontSize*this.lineHeight;
-    this._offset = -Math.floor(lines.length/2)*this.lineSize;
-    this._offset += ((lines.length+1)%2) * (this.lineSize/2);
+    // リサイズ
+    var size = this.calcCanvasSize();
+    canvas.setSize(size.width, size.height);
+
+    // var lines = this._lines;
+    // this.lineSize = this.fontSize*this.lineHeight;
+    // this._offset = -Math.floor(lines.length/2)*this.lineSize;
+    // this._offset += ((lines.length+1)%2) * (this.lineSize/2);
   },
 
   _accessor: {
@@ -129,7 +133,7 @@ phina.define('phina.pixi.display.Label', {
       this.fontStyle.fill = newVal;
     });
     this.prototype.$watch('stroke', function(newVal, oldVal) {
-      this.fontStyle.fontSize = newVal;
+      this.fontStyle.stroke = newVal;
     });
     // Shape.watchRenderProperty.call(this, 'align');
     // Shape.watchRenderProperty.call(this, 'baseline');

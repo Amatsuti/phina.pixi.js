@@ -31,20 +31,24 @@ phina.define('phina.pixi.graphics.Canvas', {
     height= height|| this.height;
     this.context.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
     if(fillStyle == 'transparent'){
-      this.context.beginFill(0,0.0);
     }else{
       this.context.beginFill(fillStyle);
+      this.context.drawRect(x, y, width, height);
+      this.context.closePath();
+      this.context.endFill();
     }
-    this.context.drawRect(x, y, width, height);
-    this.context.endFill();
     return this;
   },
 
   beginPath: function(){
     var fill = this._fillStyle;
     var line = this._strokeStyle;
-    this.context.beginFill(fill.color, fill.alpha);
-    this.context.lineStyle(line.width, line.color, line.alpha);
+    if(line.color != 'transparent'){
+      this.context.lineStyle(line.width, line.color, line.alpha);
+    }
+    if(fill.color != 'transparent'){
+      this.context.beginFill(fill.color, fill.alpha);
+    }
     return this;
   },
   closePath: function(){
@@ -240,6 +244,7 @@ phina.define('phina.pixi.graphics.Canvas', {
     var t = y + radius;
     var b = y + height - radius;
     
+    //TODO drawRoundedRectでもよいかも
     /*
     var ctx = this.context;
     ctx.moveTo(l, y);
@@ -252,11 +257,12 @@ phina.define('phina.pixi.graphics.Canvas', {
     ctx.lineTo(x, t);
     ctx.quadraticCurveTo(x, y, l, y);
     /**/
-    
+    this.context.moveTo(l - radius, t);
     this.context.arc(l, t, radius,     -Math.PI, -Math.PI*0.5, false);  // 左上
     this.context.arc(r, t, radius, -Math.PI*0.5,            0, false);  // 右上
     this.context.arc(r, b, radius,            0,  Math.PI*0.5, false);  // 右下
     this.context.arc(l, b, radius,  Math.PI*0.5,      Math.PI, false);  // 左下
+    this.context.lineTo(l - radius, t);
     this.closePath();
     
     return this;
@@ -610,7 +616,13 @@ phina.define('phina.pixi.graphics.Canvas', {
   _accessor:{
     fontStyle:{
       get: function(){ return this._fontStyle; },
-    }
+    },
+    fillStyle: {
+      get: function(){ return this._fillStyle; },
+    },
+    strokeStyle: {
+      get: function(){ return this._strokeStyle; }
+    },
   },
 
   _static:{

@@ -56,6 +56,15 @@ phina.define('phina.pixi.display.PlainElement', {
     this.y = y;
     return this;
   },
+
+  on: function(type, listener, f){
+    if(!f){
+      this.context.on(type, listener.bind(this));
+    }
+    //なぜか3回呼ばれる対策でtrueにしておく
+    return this.superMethod('on', type, listener, true);
+  },
+
   _static:{
     defaults:{
       width:100, height:100,
@@ -64,19 +73,19 @@ phina.define('phina.pixi.display.PlainElement', {
   },
   _defined: function(){
     this.prototype.$watch('x', function(newVal, oldVal) {
-      this.context.x = newVal;
+      this.context.x = newVal - this.originX * this.width;
     });
     this.prototype.$watch('y', function(newVal, oldVal) {
-      this.context.y = newVal;
+      this.context.y = newVal - this.originY * this.height;
     });
     this.prototype.$watch('rotation', function(newVal, oldVal) {
       this.context.rotation = newVal;
     });
     this.prototype.$watch('originX', function(newVal, oldVal) {
-      this.context.pivot.x = newVal * this.width;
+      this.context.x = newVal - this.originX * this.width;
     });
     this.prototype.$watch('originY', function(newVal, oldVal) {
-      this.context.pivot.y = newVal * this.height;
+      this.context.y = newVal - this.originY * this.height;
     });
     this.prototype.$watch('scaleX', function(newVal, oldVal) {
       this.context.scale.x = newVal;
@@ -90,9 +99,14 @@ phina.define('phina.pixi.display.PlainElement', {
     this.prototype.$watch('height', function(newVal, oldVal) {
       this.context.height = newVal;
     });
-    // this.prototype.$watch('radius', function(newVal, oldVal) {
-    //   this.canvas.y = newVal;
-    // });
+    this.prototype.$watch('radius', function(newVal, oldVal) {
+      this.context.radius = newVal;
+    });
+    this.prototype.$watch('interactive', function(newVal, oldVal) {
+      this.context.interactive = newVal;
+      this.context.buttonMode = newVal;
+      this.__interactive = false;
+    });
   },
 });
 

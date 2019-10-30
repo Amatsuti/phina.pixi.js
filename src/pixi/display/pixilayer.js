@@ -18,12 +18,14 @@ phina.define('phina.display.PixiLayer', {
 
     this.renderer = PIXI.autoDetectRenderer({
       width:options.width, height:options.height,
-      antialias:true, transparent: true
+      antialias:true, transparent: true,
     });
+    var interaction = this.renderer.plugins.interaction;
+    interaction.setTargetElement(phina.global.app.domElement);
 
     this.on('enterframe', function() {
       this.renderer.render(canvas.context);
-    });
+    }, true);
   },
 
   draw: function(canvas) {
